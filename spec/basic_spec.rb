@@ -4,14 +4,14 @@ describe CommonCrawlIndex do
   AMAZON_ACCESS_KEY_ID = ENV['AMAZON_ACCESS_KEY_ID']
   AMAZON_SECRET_ACCESS_KEY = ENV['AMAZON_SECRET_ACCESS_KEY']
 
-  it "should init successfully" do
+  it "should config successfully" do
     settings = {
       :access_key_id => "access_key",
       :secret_access_key => "secret_key",
       :cc_index_path => "s3://aws-publicdatasets/common-crawl/projects/url-index/url-index.1356128792" # optional
     }
 
-    CommonCrawlIndex::Client.init(settings)
+    CommonCrawlIndex::Client.config(settings)
 
     final_settings = CommonCrawlIndex::Client.class_variable_get(:@@settings)
 
@@ -20,7 +20,6 @@ describe CommonCrawlIndex do
 
   it "should initialize client" do
     client = CommonCrawlIndex::Client.new(AMAZON_ACCESS_KEY_ID, AMAZON_SECRET_ACCESS_KEY)
-
     client.should_not == nil
   end
 

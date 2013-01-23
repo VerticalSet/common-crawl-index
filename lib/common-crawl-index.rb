@@ -1,4 +1,4 @@
-require "cc-url-index/version"
+require "common-crawl-index/version"
 require 'aws-sdk'
 require 'open3'
 
@@ -11,7 +11,7 @@ module CommonCrawlIndex
       :cc_index_path => "s3://aws-publicdatasets/common-crawl/projects/url-index/url-index.1356128792"
     }
 
-    def self.init(settings = {})
+    def self.config(settings = {})
       @@settings = @@settings.merge(settings)
     end
 

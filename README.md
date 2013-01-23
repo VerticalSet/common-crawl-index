@@ -1,4 +1,4 @@
-# Cc::Url::Index
+# CommonCrawlIndex
 
 TODO: Write a gem description
 
@@ -6,7 +6,7 @@ TODO: Write a gem description
 
 Add this line to your application's Gemfile:
 
-    gem 'cc-url-index'
+    gem 'common-crawl-index'
 
 And then execute:
 
@@ -14,7 +14,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install cc-url-index
+    $ gem install common-crawl-index
 
 ## Usage
 
