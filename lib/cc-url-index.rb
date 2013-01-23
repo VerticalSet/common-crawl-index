@@ -1,5 +1,4 @@
 require "cc-url-index/version"
-#require 'rubygems'
 require 'aws-sdk'
 require 'open3'
 
@@ -41,14 +40,27 @@ module CommonCrawlIndex
       get_matching_urls_from_data_blocks(next_block, url, exact_match, &proc_block)
     end
 
-    def self.normalize_url(url, append_schema = true)
+    def self.normalize_url(url, append_scheme = true)
       url_to_find = url
       norm_url_to_find = URI(url_to_find)
       norm_url_to_find.host = norm_url_to_find.host.split(".").reverse.join(".")
       norm_url = norm_url_to_find.to_s
       norm_url = norm_url[norm_url.index("\/\/")+2..-1]
-      norm_url = ":" + norm_url_to_find.scheme if append_schema
+      norm_url += ":" + norm_url_to_find.scheme if append_scheme
       norm_url
+    end
+
+    def self.denormalize_url(normalized_url, has_scheme = true)
+      scheme = "http"
+      colon_index = 0
+      if has_scheme
+        colon_index = normalized_url.rindex(":")
+        scheme = normalized_url[colon_index+1..-1] if colon_index
+      end
+      url_with_scheme = scheme + "://" + normalized_url[0..colon_index-1]
+      uri = URI(url_with_scheme)
+      uri.host = uri.host.split(".").reverse.join(".")
+      uri.to_s
     end
 
     private
@@ -71,6 +83,10 @@ module CommonCrawlIndex
       end_found = false
       while(!end_found)
         if cur_block[cur_loc..cur_loc] == "\x00" || cur_loc >= @block_size
+          # to next block
+          if !first_match_found || exact_match # don't search next block for exact match
+            return false
+          end
           cur_block_index += 1
           cur_block = read_block(cur_block_index)
           cur_loc = 0
@@ -79,20 +95,23 @@ module CommonCrawlIndex
         url = cur_block[cur_loc..nil_loc-1]
         if url[0..norm_url_length-1] == norm_url
           url_data = {}
-          url_data[:url] = url
-          if first_match_found
-            if exact_match
-              if url == Client.normalize_url(url_to_find, true)
-                proc_block.call(url_data)
-              else
-                proc_block.call(nil)
-              end
+          url_data[:normalized_url] = url
+          url_data[:url] = Client.denormalize_url(url)
+          a,b,c,d,e = cur_block[nil_loc+1..nil_loc+32].unpack("QQLQL")
+          url_data[:arcSourceSegmentId] = a
+          url_data[:arcFileDate] = b
+          url_data[:arcFilePartition] = c
+          url_data[:arcFileOffset] = d
+          url_data[:compressedSize] = e
+          if exact_match
+            if url == Client.normalize_url(url_to_find, true)
+              proc_block.call(url_data)
               break
             end
           else
             first_match_found = true
+            break if proc_block.call(url_data) == false
           end
-          break if proc_block.call(url_data) == false
         else
           if first_match_found
             break
@@ -107,7 +126,7 @@ module CommonCrawlIndex
     end
 
     def read_block(block_id)
-      puts "Reading block No: #{block_id}"
+      #puts "Reading block No: #{block_id}"
       start = HEADER_OFFSET + @block_size * block_id
       target_range = (start..start+@block_size-1)
       cur_block = read(target_range)
@@ -117,7 +136,6 @@ module CommonCrawlIndex
     def get_next_block_id(url_to_find, block_id)
       norm_url = Client.normalize_url(url_to_find, false)
       cur_block = read_block(block_id)
-      #puts cur_block[0..1000].inspect
 
       not_found = true
       cur_loc = 4
@@ -125,7 +143,7 @@ module CommonCrawlIndex
 
       counter = 0
 
-      while not_found # && counter < 3
+      while not_found
 
         counter += 1
 
@@ -140,8 +158,6 @@ module CommonCrawlIndex
         if cur_prefix >= norm_url
           next_block = last_block_num || cur_block_num
           return next_block
-        else
-          #puts "Less"
         end
 
         break if cur_loc >= @block_size
