@@ -10,7 +10,7 @@ Gem::Specification.new do |gem|
   gem.email         = ["amitamb@gmail.com"]
   gem.description   = %q{Access coomon crawl URL index}
   gem.summary       = %q{Access coomon crawl URL index}
-  gem.homepage      = ""
+  gem.homepage      = "https://github.com/VerticalSet/common-crawl-index"
 
   gem.add_development_dependency "rspec"
 
