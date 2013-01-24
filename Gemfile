@@ -4,4 +4,4 @@ source 'https://rubygems.org'
 gemspec
 
 gem 'aws-sdk'
-#gem 'open3'
+gem 'addressable'

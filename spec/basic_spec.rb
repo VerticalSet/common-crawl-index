@@ -26,7 +26,7 @@ describe CommonCrawlIndex do
   it "should find by prefix" do
     client = CommonCrawlIndex::Client.new(AMAZON_ACCESS_KEY_ID, AMAZON_SECRET_ACCESS_KEY)
 
-    total_urls_to_test = 100
+    total_urls_to_test = 2500
 
     url = "http://www.amazon.com/"
     normalized_url = CommonCrawlIndex::Client.normalize_url(url, false)
@@ -60,6 +60,8 @@ describe CommonCrawlIndex do
   end
 
   it "should denormalize the urls correctly" do
+    # fails on
+    # http://com.google.www/cse?cx=009462381166450434430:-woy8fnynf8&ie=UTF-8&q=physician+Cardiology+Diagnostics+md+"Greater+Atlanta+Area"+-recruiter&sa=Search&siteurl=www.google.com/cse/home%3Fcx%3D009462381166450434430%253A-woy8fnynf8
     url =  CommonCrawlIndex::Client.denormalize_url("com.google.www/test/path:http")
     url.should == "http://www.google.com/test/path"
   end

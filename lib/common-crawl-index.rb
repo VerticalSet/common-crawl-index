@@ -1,7 +1,7 @@
-require "common-crawl-index/version"
+require 'common-crawl-index/version'
 require 'aws-sdk'
 require 'open3'
-
+require 'addressable/uri'
 
 module CommonCrawlIndex
   class Client
@@ -42,7 +42,7 @@ module CommonCrawlIndex
 
     def self.normalize_url(url, append_scheme = true)
       url_to_find = url
-      norm_url_to_find = URI(url_to_find)
+      norm_url_to_find = Addressable::URI.parse(url_to_find)
       norm_url_to_find.host = norm_url_to_find.host.split(".").reverse.join(".")
       norm_url = norm_url_to_find.to_s
       norm_url = norm_url[norm_url.index("\/\/")+2..-1]
@@ -58,7 +58,7 @@ module CommonCrawlIndex
         scheme = normalized_url[colon_index+1..-1] if colon_index
       end
       url_with_scheme = scheme + "://" + normalized_url[0..colon_index-1]
-      uri = URI(url_with_scheme)
+      uri = Addressable::URI.parse(url_with_scheme)
       uri.host = uri.host.split(".").reverse.join(".")
       uri.to_s
     end
@@ -119,6 +119,7 @@ module CommonCrawlIndex
         end
         cur_loc = nil_loc + 32 + 1
       end
+      true
     end
 
     def read(target_range)
