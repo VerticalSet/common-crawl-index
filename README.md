@@ -18,7 +18,7 @@ Or install it yourself as:
 
 ## Usage
 
-When using with Rails in config/initializers/common_crawl_index.rb
+When using with Rails in `config/initializers/common_crawl_index.rb`
 
 ```ruby
 CommonCrawlIndex::Client.config({
@@ -44,7 +44,7 @@ client.find_by_prefix(url) do |url_data|
 end
 ```
 
-See spec/basic_spec.rb for more examples on usage.
+See `spec/basic_spec.rb` for more examples on usage.
 
 ## Contributing
 
