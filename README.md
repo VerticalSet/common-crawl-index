@@ -1,6 +1,6 @@
 # CommonCrawlIndex
 
-Use this gem to access [Common Crawl URL Index](http://commoncrawl.org/common-crawl-url-index/)
+Use this gem to access [Common Crawl URL Index](http://commoncrawl.org/common-crawl-url-index/) with ruby. You can get more information on format and original python implementation at https://github.com/trivio/common_crawl_index
 
 ## Installation
 
