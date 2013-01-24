@@ -52,6 +52,9 @@ describe CommonCrawlIndex do
   it "should normalize the urls correctly" do
     normalized_url =  CommonCrawlIndex::Client.normalize_url("http://www.google.com/test/path")
     normalized_url.should == "com.google.www/test/path:http"
+
+    normalized_url =  CommonCrawlIndex::Client.normalize_url("http://www.google.com/cse?cx=009462381166450434430:-woy8fnynf8&ie=UTF-8&q=physician+Cardiology+Diagnostics+md+\"Greater+Atlanta+Area\"+-recruiter&sa=Search&siteurl=www.google.com/cse/home%3Fcx%3D009462381166450434430%253A-woy8fnynf8")
+    normalized_url.should == "com.google.www/cse?cx=009462381166450434430:-woy8fnynf8&ie=UTF-8&q=physician+Cardiology+Diagnostics+md+\"Greater+Atlanta+Area\"+-recruiter&sa=Search&siteurl=www.google.com/cse/home%3Fcx%3D009462381166450434430%253A-woy8fnynf8:http"
   end
 
   it "should normalize the urls correctly without scheme" do
@@ -60,10 +63,11 @@ describe CommonCrawlIndex do
   end
 
   it "should denormalize the urls correctly" do
-    # fails on
-    # http://com.google.www/cse?cx=009462381166450434430:-woy8fnynf8&ie=UTF-8&q=physician+Cardiology+Diagnostics+md+"Greater+Atlanta+Area"+-recruiter&sa=Search&siteurl=www.google.com/cse/home%3Fcx%3D009462381166450434430%253A-woy8fnynf8
     url =  CommonCrawlIndex::Client.denormalize_url("com.google.www/test/path:http")
     url.should == "http://www.google.com/test/path"
+
+    url =  CommonCrawlIndex::Client.denormalize_url("com.google.www/cse?cx=009462381166450434430:-woy8fnynf8&ie=UTF-8&q=physician+Cardiology+Diagnostics+md+\"Greater+Atlanta+Area\"+-recruiter&sa=Search&siteurl=www.google.com/cse/home%3Fcx%3D009462381166450434430%253A-woy8fnynf8:http")
+    url.should == "http://www.google.com/cse?cx=009462381166450434430:-woy8fnynf8&ie=UTF-8&q=physician+Cardiology+Diagnostics+md+\"Greater+Atlanta+Area\"+-recruiter&sa=Search&siteurl=www.google.com/cse/home%3Fcx%3D009462381166450434430%253A-woy8fnynf8"
   end
 
   it "should denormalize the urls correctly without scheme" do
