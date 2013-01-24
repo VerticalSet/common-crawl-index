@@ -1,6 +1,6 @@
 # CommonCrawlIndex
 
-TODO: Write a gem description
+Use this gem to access [Common Crawl URL Index](http://commoncrawl.org/common-crawl-url-index/)
 
 ## Installation
 
